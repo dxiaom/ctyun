@@ -7,15 +7,24 @@
 ### 一键安装
 
 ```bash
-# 克隆项目
-git clone https://github.com/Amamiyashi0n/ctyun_keepalive.git
-cd ctyun_keepalive
+curl -fsSL https://raw.githubusercontent.com/dxiaom/ctyun/main/install.sh | sudo bash
+```
 
-# 安装 (需要 sudo 权限)
-sudo bash install.sh
+或
+
+```bash
+wget -qO- https://raw.githubusercontent.com/dxiaom/ctyun/main/install.sh | sudo bash
 ```
 
 安装完成后，`ctyun` 命令将被安装到 `/usr/local/bin/`，可以在任意目录使用。
+
+### 手动安装
+
+```bash
+git clone https://github.com/dxiaom/ctyun.git
+cd ctyun
+sudo bash install.sh
+```
 
 ## 使用方法
 

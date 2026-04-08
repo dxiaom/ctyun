@@ -1,9 +1,9 @@
 #!/bin/bash
 
 INSTALL_DIR="/usr/local/bin"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SERVICE_NAME="ctyun"
 CONFIG_DIR="$HOME/.ctyun"
+REPO_URL="https://raw.githubusercontent.com/dxiaom/ctyun/main"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -32,6 +32,20 @@ check_python() {
     fi
 }
 
+download_file() {
+    local url="$1"
+    local output="$2"
+    
+    if command -v curl &> /dev/null; then
+        curl -fsSL "$url" -o "$output"
+    elif command -v wget &> /dev/null; then
+        wget -q "$url" -O "$output"
+    else
+        log_error "需要 curl 或 wget 来下载文件"
+        return 1
+    fi
+}
+
 install_service() {
     PYTHON_CMD=$(check_python)
     if [ -z "$PYTHON_CMD" ]; then
@@ -44,8 +58,20 @@ install_service() {
     
     mkdir -p "$CONFIG_DIR"
     
-    cp "$SCRIPT_DIR/ctyun_keepalive.py" "$CONFIG_DIR/"
-    cp "$SCRIPT_DIR/ctyun" "$INSTALL_DIR/"
+    log_info "正在下载文件..."
+    
+    download_file "$REPO_URL/ctyun_keepalive.py" "$CONFIG_DIR/ctyun_keepalive.py"
+    if [ $? -ne 0 ]; then
+        log_error "下载 ctyun_keepalive.py 失败"
+        exit 1
+    fi
+    
+    download_file "$REPO_URL/ctyun" "$INSTALL_DIR/ctyun"
+    if [ $? -ne 0 ]; then
+        log_error "下载 ctyun 失败"
+        exit 1
+    fi
+    
     chmod +x "$INSTALL_DIR/ctyun"
     
     sed -i "s|__PYTHON_CMD__|$PYTHON_CMD|g" "$INSTALL_DIR/ctyun"
